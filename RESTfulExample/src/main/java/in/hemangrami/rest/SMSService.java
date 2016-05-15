@@ -18,7 +18,7 @@ import in.hemangrami.model.UserToken;
 @Path("/smsservice")
 public class SMSService extends BaseService implements IWSService {
 
-	private MessageHandler messageHandler = new SMSHandler();
+	private MessageHandler messageHandler = new SMSHandler(getServiceConfig());
 
 	@POST
 	@Path("/sendmsg")

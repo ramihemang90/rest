@@ -19,7 +19,7 @@ public class SMSHandler implements MessageHandler {
 	public static final String AUTH_TOKEN = "{{ auth_token }}";
 
 	private String from ="92992929";
-	public SMSHandler() {
+	public SMSHandler(Properties serviceConfig) {
 		
 	}
 

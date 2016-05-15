@@ -2,13 +2,13 @@ package in.hemangrami.rest;
 
 import javax.ws.rs.core.Response;
 
-import in.hemangrami.model.Message;
+import in.hemangrami.model.UserToken;
 
 public interface IWSService {
 
 	
-	public Response sendMessage(Message message);
+	public Response sendMessage(UserToken usertoken);
 	
-	public Response cancelMessage(Message message);
+	public Response cancelMessage(UserToken usertoken);
 	
 }

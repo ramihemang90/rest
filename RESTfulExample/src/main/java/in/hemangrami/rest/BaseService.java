@@ -1,5 +1,7 @@
 package in.hemangrami.rest;
 
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,6 +10,11 @@ import javax.ws.rs.core.Context;
 
 public abstract class BaseService {
 
+	private static Properties serivceConfig = new Properties();
+	
+	static{
+		loadConfigurations();
+	}
 	
 	@Context
 	private HttpServletRequest request;
@@ -32,6 +39,23 @@ public abstract class BaseService {
 		}
 	}
 	
+	
+	
+	private static void loadConfigurations(){
+		try{
+			
+			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties");
+			if(is!=null){
+				Properties prop= new Properties();
+				prop.load(is);
+				serivceConfig= prop;
+			}
+			
+		}catch(Exception ex){
+			System.out.println("Exception occured while loading configuration properties . Possible reason  : "+ ex.getMessage());
+		}
+	}
+	
 	public String getUserToken(){
 		return (String) request.getSession().getAttribute("USER_TOKEN");
 	}
@@ -46,4 +70,14 @@ public abstract class BaseService {
 	public void doLogout(){
 		request.getSession().invalidate();
 	}
+	
+	
+	public String getProperty(String key){
+		return serivceConfig.getProperty(key);
+	}
+	
+	public Properties getServiceConfig(){
+		return serivceConfig;
+	}
+	
 }

@@ -19,7 +19,7 @@ public class EmailHandler implements MessageHandler {
 	private String password = "<password>";
 	private Properties props = new Properties();
 
-	public EmailHandler() {
+	public EmailHandler(Properties serviceconfig) {
 		// TODO Auto-generated constructor stub
 // Via TLS
 		/*props.put("mail.smtp.auth", "true");
@@ -27,6 +27,13 @@ public class EmailHandler implements MessageHandler {
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.port", "587");*/
 		/*Via SSL**/
+		
+		this.from = serviceconfig.getProperty("email.from");
+		this.username  = serviceconfig.getProperty("email.username");
+		this.password  = serviceconfig.getProperty("email.password");
+		StringBuilder logBuilder =new StringBuilder();
+		logBuilder.append("from:"+this.from+"\n").append("username:"+this.username);
+		System.out.println(logBuilder.toString());
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.socketFactory.port", "465");
 		props.put("mail.smtp.socketFactory.class",

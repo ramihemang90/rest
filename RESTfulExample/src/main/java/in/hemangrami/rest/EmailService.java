@@ -13,28 +13,30 @@ import in.hemangrami.db.DBUtils;
 import in.hemangrami.handler.EmailHandler;
 import in.hemangrami.handler.MessageHandler;
 import in.hemangrami.model.Message;
+import in.hemangrami.model.UserToken;
 
 @Path("/emailservice")
 public class EmailService extends BaseService implements IWSService {
 
-	private MessageHandler messageHandler = new EmailHandler();
+	private MessageHandler messageHandler = new EmailHandler(getServiceConfig());
 
 	@POST
 	@Path("/sendmsg")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Override
-	public Response sendMessage(Message message) {
+	public Response sendMessage(UserToken message) {
 
 		// Authenticating and Authorizing request
 		if (authorizeUser(message.getUsertoken()) != 200) {
 			return Response.status(403).entity("Invalid user session. Please login to use service.").build();
 		}
 		// Do logic
+		Message orgMsg = DBUtils.prepareOrgEmailMessage(false, getUserId());
+		if (orgMsg != null) {
+			List<String> mobileNumbers = DBUtils.getAssociatedCustomerEmails(getUserId());
 
-		List<String> mobileNumbers = DBUtils.getAssociatedCustomerEmails(getUserId());
-
-		messageHandler.deliverMessage(message, mobileNumbers, new Properties());
-
+			messageHandler.deliverMessage(orgMsg, mobileNumbers, new Properties());
+		}
 		String result = "{\"response\":0,\"message\":\"message  sent successfully.\"}";
 		return Response.status(201).entity(result).build();
 	}
@@ -43,7 +45,7 @@ public class EmailService extends BaseService implements IWSService {
 	@Path("/cancelmsg")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Override
-	public Response cancelMessage(Message message) {
+	public Response cancelMessage(UserToken message) {
 
 		// Authenticating and Authorizing request
 		if (authorizeUser(message.getUsertoken()) != 200) {
@@ -51,10 +53,12 @@ public class EmailService extends BaseService implements IWSService {
 		}
 		// Do logic
 
-		List<String> mobileNumbers = DBUtils.getAssociatedCustomerEmails(getUserId());
+		Message orgMsg = DBUtils.prepareOrgEmailMessage(true, getUserId());
+		if (orgMsg != null) {
+			List<String> mobileNumbers = DBUtils.getAssociatedCustomerEmails(getUserId());
 
-		messageHandler.deliverMessage(message, mobileNumbers, new Properties());
-
+			messageHandler.deliverMessage(orgMsg, mobileNumbers, new Properties());
+		}
 		String result = "{\"response\":0,\"message\":\"message  sent successfully.\"}";
 		return Response.status(201).entity(result).build();
 	}

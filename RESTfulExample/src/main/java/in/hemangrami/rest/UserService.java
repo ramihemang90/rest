@@ -29,7 +29,10 @@ public class UserService extends BaseService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response login(User user) {
 		if (user != null && user.getUsername() != null && user.getPassword() != null) {
-
+			
+			if(!DBUtils.authenticateUser(user)){
+				return Response.status(404).entity("Username/Password invalid.").build();
+			}
 			// authentication logic
 			registerSession(user.getUsername(), 1);
 

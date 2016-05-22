@@ -56,6 +56,21 @@ public class DBUtilsTest {
 	}
 	
 	@Test
+	public void testAuthenticateUserFAIL(){
+		try{
+			User user= new User();
+			user.setUsername("admin");
+			user.setPassword("admin1");
+			boolean isvalid=DBUtils.authenticateUser(user);
+			Assert.assertEquals("User must be authenticated.",false, isvalid);
+			Assert.assertNotNull("User id should not be null", user.getId());
+			
+		}catch(Exception ex){
+			Assert.fail("Unexpected exception occured."+ ex.getMessage());
+		}
+	}
+	
+	@Test
 	public void testEmailList(){
 		try{
 			User user= new User();
